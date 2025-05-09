@@ -12,42 +12,51 @@ import userManager from '../../auth/forgerockConfig';
 // Create a custom theme
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#006a4d', // Custom primary color
+    primary: { main: '#006a4d' },
+    secondary: { main: '#006a4d' },
+  },
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+    fontSize: 14, // base font size
+    h6: {
+      fontSize: '1.1rem',
+      fontWeight: 600,
     },
-    secondary: {
-      main: '#006a4d', // Custom secondary color (optional)
+    body2: {
+      fontSize: '0.9rem',
+    },
+    button: {
+      fontSize: '0.9rem',
+      textTransform: 'none',
+      fontWeight: 600,
     },
   },
   components: {
-    // Override the styles for TextField
     MuiTextField: {
       styleOverrides: {
         root: {
           '& .MuiInputBase-root': {
-            '&:hover': {
-              borderColor: '#006a4d', // Hover border color for TextField
-            },
+            fontSize: '0.9rem',
           },
         },
       },
     },
-    // Override the styles for Select (for dropdowns)
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          '&:hover': {
-            borderColor: '#006a4d', // Hover border color for Select
-          },
-        },
-      },
-    },
-    // Override the styles for Button (optional)
     MuiButton: {
       styleOverrides: {
         root: {
+          fontSize: '0.9rem',
           '&:hover': {
-            backgroundColor: '#004d3f', // Darker shade for Button hover
+            backgroundColor: '#004d3f',
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.9rem',
+          '&:hover': {
+            borderColor: '#006a4d',
           },
         },
       },
@@ -55,13 +64,14 @@ const theme = createTheme({
   },
 });
 
+
 // Utility function to simulate OTP generation (6-digit number)
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 const maskedPhoneNumber = (phoneNumber) => {
     const visibleDigits = 4;
     if (phoneNumber.length <= visibleDigits) return phoneNumber;
-    const maskedPart = "*".repeat(phoneNumber.length - visibleDigits);
+    const maskedPart = "x".repeat(phoneNumber.length - visibleDigits);
     const visiblePart = phoneNumber.slice(-visibleDigits);
     return maskedPart + visiblePart;
 }
@@ -69,6 +79,7 @@ const maskedPhoneNumber = (phoneNumber) => {
 // LoginPage component
 function LoginPage() {
   // State variables
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);              // Current selected tab
   const [identifier, setIdentifier] = useState('');          // Phone or email input
   const [otp, setOtp] = useState('');                        // User-entered OTP
@@ -86,7 +97,8 @@ function LoginPage() {
   const isPhone = (value) => /^\d{10}$/.test(value);
 
   const handleLogin = () => {
-    userManager.signinRedirect();
+    setIsLoggingIn(true);
+    // userManager.signinRedirect(); // this redirects to OIDC provider
   };
 
   // Handle OTP sending
@@ -132,7 +144,7 @@ function LoginPage() {
       boxShadow: 3,
       borderRadius: 3,
       overflow: 'hidden',
-      height:"75vh",
+      height:"92vh",
     }}
   >
      <Box
@@ -155,14 +167,14 @@ function LoginPage() {
           </Typography>
         </Box>
 <ThemeProvider theme={theme} > 
-    <Paper elevation={4} sx={{ padding: 4, width:400}}>
+    <Paper elevation={4} sx={{ padding: 3, width:400}}>
       {/* Title */}
-      <Typography fontWeight="bold" variant="h6" align="center" sx={{ marginBottom: 2 }}>
+      <Typography fontWeight="bold" variant="h6" align="center" sx={{ marginBottom: 1 }}>
         Secure Login
       </Typography>
 
       {/* Description */}
-      <Typography variant="body2" align="center" sx={{ marginBottom: 3, color: 'text.secondary' }}>
+      <Typography variant="body2" align="center" sx={{ marginBottom: 1, color: 'text.secondary' }}>
         If you are already logged in, select a method to continue.
       </Typography>
 
@@ -190,6 +202,7 @@ function LoginPage() {
             >
               Login
             </Button>
+            
           </Box>
         )}
 
